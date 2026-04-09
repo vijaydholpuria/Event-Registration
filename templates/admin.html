@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #000000, #1f1f1f);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .dark .card {
+            background: rgba(255, 255, 255, 0.05);
+        }
+    </style>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #000428, #004e92);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+
+</head>
+
+<body class="text-white p-10">
+    <button onclick="toggleDark()"
+        class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
+
+        🌙
+
+    </button>
+
+    <script>
+        function toggleDark() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme",
+                document.documentElement.classList.contains("dark") ? "dark" : "light"
+            );
+        }
+
+        // load saved theme
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <h1 class="text-3xl mb-6">Admin Dashboard</h1>
+
+    <!-- CREATE EVENT -->
+    <div class="card p-6 mb-6">
+
+        <h2 class="text-xl mb-4">Create Event</h2>
+
+        <form action="/add_event" method="POST" enctype="multipart/form-data">
+
+            <input class="w-full p-2 text-black mb-3 rounded" name="title" placeholder="Event Title">
+
+            <textarea class="w-full p-2 text-black mb-3 rounded" name="description"
+                placeholder="Description"></textarea>
+
+            <input class="w-full p-2 text-black mb-3 rounded" type="date" name="date">
+
+            <select name="type" class="w-full p-2 text-black mb-3 rounded">
+                <option value="free">Free Event</option>
+                <option value="paid">Paid Event</option>
+            </select>
+
+            <input class="w-full p-2 text-black mb-3 rounded" name="price" placeholder="Price (for paid)">
+
+            <input class="w-full p-2 text-black mb-3 rounded" name="contact_email" placeholder="Contact Email">
+
+            <input type="file" name="image" class="mb-3">
+
+            <button class="bg-green-500 px-6 py-2 rounded w-full hover:bg-green-700">
+                Create Event
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- MANAGE EVENTS -->
+    <div class="card p-6 mb-6">
+
+        <h2 class="text-xl mb-4">Manage Events</h2>
+
+        {% for e in events %}
+
+        <div class="bg-white/10 p-4 rounded mb-3">
+
+            <h3 class="text-lg font-bold">{{e[1]}}</h3>
+
+            <p>{{e[2]}}</p>
+
+            <p>Type: {{e[5]}} | ₹{{e[6]}}</p>
+
+            <div class="mt-3 flex gap-3">
+
+                <a href="/delete_event/{{e[0]}}" class="bg-red-500 px-3 py-1 rounded">Delete</a>
+
+                <a href="/view_registrations/{{e[0]}}" class="bg-blue-500 px-3 py-1 rounded">Users</a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <a href="/logout" class="bg-red-500 px-6 py-2 rounded hover:bg-red-700">
+        Logout
+    </a>
+
+</body>
+
+</html>

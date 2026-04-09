@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #141e30, #243b55);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+
+</head>
+
+<body class="text-white px-4 py-6 sm:p-10">
+
+    <!-- DARK MODE -->
+    <button onclick="toggleDark()"
+        class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
+        🌙
+    </button>
+
+    <script>
+        function toggleDark() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme",
+                document.documentElement.classList.contains("dark") ? "dark" : "light"
+            );
+        }
+
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <h1 class="text-2xl sm:text-3xl mb-6">👥 Registered Users</h1>
+
+    <!-- ✅ MOBILE + DESKTOP RESPONSIVE -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+        {% for r in data %}
+
+        <div class="card p-5">
+
+            <!-- NAME -->
+            <h2 class="text-lg font-bold mb-2">
+                {{r[0]}}
+            </h2>
+
+            <!-- EMAIL -->
+            <p class="text-sm text-gray-300 mb-1">
+                📧 {{r[1]}}
+            </p>
+
+            <!-- MOBILE -->
+            <p class="text-sm text-gray-300 mb-1">
+                📱 {{r[2]}}
+            </p>
+
+            <!-- AGE -->
+            <p class="text-sm text-gray-300 mb-1">
+                🎂 Age: {{r[3]}}
+            </p>
+
+            <!-- ADDRESS -->
+            <p class="text-sm text-gray-300 mb-2">
+                📍 {{r[4]}}
+            </p>
+
+            <!-- STATUS -->
+            <p class="mb-2 font-semibold">
+                {% if r[5] == "done" %}
+                <span class="bg-green-500 px-3 py-1 rounded">✔ Paid</span>
+                {% else %}
+                <span class="bg-yellow-500 px-3 py-1 rounded">⏳ Pending</span>
+                {% endif %}
+            </p>
+
+            <!-- EVENT -->
+            <p class="text-blue-300 text-sm">
+                🎟 {{r[6]}}
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <br>
+
+    <a href="/admin" class="bg-blue-500 px-6 py-2 rounded hover:bg-blue-700">
+        ⬅ Back to Admin
+    </a>
+
+</body>
+
+</html>

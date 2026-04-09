@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <title>Contact</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body class="text-white px-4 py-6 sm:p-10 flex justify-center items-center min-h-screen">
+
+    <div class="card p-8 w-full max-w-md">
+
+        <h2 class="text-2xl mb-6 text-center">📩 Contact Admin</h2>
+
+        <form action="/contact" method="POST">
+
+            <input name="name" placeholder="Your Name" class="w-full p-3 mb-4 rounded text-black" required>
+
+            <input name="email" placeholder="Your Email" class="w-full p-3 mb-4 rounded text-black" required>
+
+            <textarea name="message" placeholder="Your Message" class="w-full p-3 mb-4 rounded text-black"
+                required></textarea>
+
+            <button class="bg-blue-500 w-full p-3 rounded hover:bg-blue-700">
+                Send Message
+            </button>
+
+        </form>
+
+        <a href="/dashboard" class="block text-center mt-4 text-gray-300">
+            ⬅ Back
+        </a>
+
+    </div>
+
+</body>
+
+</html>

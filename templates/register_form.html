@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43);
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #000000, #1f1f1f);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body class="text-white p-10">
+
+    <!-- DARK MODE BUTTON -->
+    <button onclick="toggleDark()"
+        class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
+        🌙
+    </button>
+
+    <script>
+        function toggleDark() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme",
+                document.documentElement.classList.contains("dark") ? "dark" : "light"
+            );
+        }
+
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <!-- FORM -->
+    <div class="max-w-md mx-auto card p-8">
+
+        <h2 class="text-2xl mb-6">
+            {{event[1] if event else 'Event Registration'}}
+        </h2>
+
+        <form action="/submit_registration/{{event_id}}" method="POST">
+
+            <input name="name" class="w-full p-3 text-black rounded mb-4" placeholder="Name" required>
+
+            <input name="mobile" class="w-full p-3 text-black rounded mb-4" placeholder="Mobile" required>
+
+            <input name="age" class="w-full p-3 text-black rounded mb-4" placeholder="Age" required>
+
+            <textarea name="address" class="w-full p-3 text-black rounded mb-4" placeholder="Address"
+                required></textarea>
+
+            <!-- BUTTON CHANGE BASED ON EVENT TYPE -->
+            {% if event and event[5] == "paid" %}
+
+            <button class="bg-yellow-500 w-full p-3 rounded hover:bg-yellow-700">
+                Pay Now
+            </button>
+
+            {% else %}
+
+            <button class="bg-green-500 w-full p-3 rounded hover:bg-green-700">
+                Register
+            </button>
+
+            {% endif %}
+
+        </form>
+
+        <a href="/dashboard" class="block text-center mt-4 text-gray-300 hover:underline">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</body>
+
+</html>

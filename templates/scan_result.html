@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+
+    <title>Entry Verified</title>
+
+</head>
+
+<body>
+    <button onclick="toggleDark()"
+        class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
+
+        🌙
+
+    </button>
+
+    <script>
+        function toggleDark() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme",
+                document.documentElement.classList.contains("dark") ? "dark" : "light"
+            );
+        }
+
+        // load saved theme
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <h2>Entry Verified</h2>
+
+    <h3>ID : {{entry_id}}</h3>
+
+    <img src="/{{image}}" width="200">
+
+    <p>Name : {{name}}</p>
+
+    <p>Email : {{email}}</p>
+
+    <p>Mobile : {{mobile}}</p>
+
+</body>
+
+</html>

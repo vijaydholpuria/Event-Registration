@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #141e30, #243b55);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body class="text-white p-6">
+
+    <div class="max-w-xl mx-auto card p-8 text-center">
+
+        <!-- PROFILE IMAGE -->
+        <div class="text-center">
+
+            <img src="/{{user[8] if user[8] else 'static/default.png'}}" onclick="openImage()"
+                class="w-28 h-28 mx-auto rounded-full border-4 border-white cursor-pointer hover:scale-105 transition">
+
+            <!-- EDIT BUTTON -->
+            <button onclick="openEdit()" class="mt-3 bg-blue-500 px-4 py-1 rounded text-sm hover:bg-blue-700">
+                Edit Profile
+            </button>
+
+        </div>
+
+        <!-- FULL SCREEN IMAGE VIEW -->
+        <div id="imageView" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+
+            <img src="/{{user[8] if user[8] else 'static/default.png'}}" class="max-w-[90%] max-h-[90%] rounded-lg">
+
+        </div>
+
+        <!-- EDIT POPUP -->
+        <div id="editBox" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+
+            <div class="bg-white text-black p-6 rounded-lg w-80">
+
+                <h2 class="text-xl mb-4 text-center">Edit Profile</h2>
+
+                <form action="/update_profile" method="POST">
+
+                    <input name="name" placeholder="Name" class="w-full p-2 border mb-3">
+
+                    <input name="password" type="password" placeholder="New Password" class="w-full p-2 border mb-3">
+
+                    <button class="bg-green-500 w-full p-2 text-white rounded">
+                        Save
+                    </button>
+
+                </form>
+
+                <!-- IMAGE UPLOAD -->
+                <form action="/upload_profile" method="POST" enctype="multipart/form-data" class="mt-3">
+                    <input type="file" name="image" class="mb-2">
+                    <button class="bg-blue-500 w-full p-2 text-white rounded">
+                        Upload Image
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+        <script>
+            function openImage() {
+                document.getElementById("imageView").classList.remove("hidden");
+            }
+
+            function openEdit() {
+                document.getElementById("editBox").classList.remove("hidden");
+            }
+
+            // CLICK ANYWHERE CLOSE
+            document.addEventListener("click", function (e) {
+
+                let imgBox = document.getElementById("imageView");
+                let editBox = document.getElementById("editBox");
+
+                // image close
+                if (imgBox && !e.target.closest("img")) {
+                    imgBox.classList.add("hidden");
+                }
+
+                // edit close
+                if (editBox && !e.target.closest(".bg-white") && !e.target.closest("button")) {
+                    editBox.classList.add("hidden");
+                }
+
+            });
+        </script>
+
+        <!-- CHANGE IMAGE
+        <form action="/upload_profile" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" class="mb-3">
+            <button class="bg-blue-500 px-4 py-2 rounded">Upload Image</button>
+        </form> -->
+
+        <!-- DETAILS -->
+        <h2 class="text-2xl mt-4"> {{user[4]}}</h2>
+        <p class="text-gray-300"> Email: {{user[1]}}</p>
+        <p class="text-gray-300 mb-4"> Mobile: {{user[5]}}</p>
+
+        <a href="/dashboard" class="block mt-4 text-center">← Back</a>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <title>Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #000000, #1f1f1f);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            transition: 0.4s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+    </style>
+</head>
+
+<body class="text-white px-4 py-6 sm:p-10">
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div id="popup" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50">
+        {{ messages[0] }}
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById("popup").style.display = "none";
+        }, 3000);
+    </script>
+    {% endif %}
+    {% endwith %}
+
+    <!-- DARK MODE -->
+    <script>
+        function toggleDark() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme",
+                document.documentElement.classList.contains("dark") ? "dark" : "light"
+            );
+        }
+
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <!-- NAVBAR -->
+    <div class="flex justify-between items-center mb-6 relative">
+
+        <h1 class="text-xl font-bold">👋 Welcome {{name}}</h1>
+
+        <div class="flex items-center gap-3">
+
+            <!-- DARK -->
+            <button onclick="toggleDark()" class="bg-white text-black dark:bg-black dark:text-white px-2 py-1 rounded">
+                🌙
+            </button>
+
+            <!-- PROFILE CIRCLE (NEW) -->
+            <div class="relative">
+
+                <img src="/{{user[8] if user and user[8] else 'static/default.png'}}" onclick="toggleMenu(event)"
+                    class="w-10 h-10 rounded-full border-2 border-white hover:scale-110 transition">
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- DROPDOWN MENU (UPDATED MOBILE MENU) -->
+    <div id="mobileMenu"
+        class="hidden absolute right-4 top-20 bg-black/90 p-4 rounded-xl w-52 flex flex-col gap-3 z-50 shadow-xl">
+
+        <a href="/profile" class="bg-green-500 px-3 py-2 rounded text-center">👤 Profile</a>
+        <a href="/history" class="bg-purple-500 px-3 py-2 rounded text-center">📜 History</a>
+        <a href="/contact" class="bg-blue-500 px-3 py-2 rounded text-center">📞 Contact</a>
+        <a href="/about" class="bg-gray-500 px-3 py-2 rounded text-center">ℹ About</a>
+        <a href="/logout" class="bg-red-500 px-3 py-2 rounded text-center">🚪 Logout</a>
+
+    </div>
+
+    <!-- JS -->
+    <script>
+        function toggleMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById("mobileMenu");
+            menu.classList.toggle("hidden");
+        }
+
+        // CLICK OUTSIDE CLOSE (UNCHANGED LOGIC)
+        document.addEventListener("click", function (e) {
+            const menu = document.getElementById("mobileMenu");
+
+            if (!menu.contains(e.target) && !e.target.closest("img")) {
+                menu.classList.add("hidden");
+            }
+        });
+    </script>
+    <!-- TITLE -->
+    <h2 class="text-2xl mb-8 font-semibold">🚀 Available Events</h2>
+
+    <!-- GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+        {% for e in events %}
+
+        <div class="card p-4 w-full">
+
+            <img src="/{{e[4]}}" class="rounded-xl mb-4 h-40 w-full object-cover">
+
+            <h3 class="text-xl font-bold mb-2">{{e[1]}}</h3>
+
+            <p class="text-gray-300 text-sm mb-2">
+                {{e[2]}}
+            </p>
+
+            <p class="text-xs text-gray-400 mb-3">
+                📅 {{e[3]}}
+            </p>
+
+            {% if e[5] == "paid" %}
+            <p class="text-yellow-400 font-semibold mb-2">💰 ₹{{e[6]}}</p>
+            {% else %}
+            <p class="text-green-400 font-semibold mb-2">🆓 Free Event</p>
+            {% endif %}
+
+            <a href="/register_form/{{e[0]}}" class="block text-center mt-3 p-2 rounded-lg
+                {% if e[5]=='paid' %}
+                bg-yellow-500 hover:bg-yellow-700
+                {% else %}
+                bg-green-500 hover:bg-green-700
+                {% endif %}">
+
+                {% if e[5]=='paid' %}
+                Pay & Register
+                {% else %}
+                Register Now
+                {% endif %}
+
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</body>
+
+</html>

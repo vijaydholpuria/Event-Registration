@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+
+    <title>Payment</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #141e30, #243b55);
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #000000, #1f1f1f);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            transition: 0.3s;
+        }
+    </style>
+
+</head>
+
+<body class="flex justify-center items-center h-screen text-white">
+
+    <!-- DARK MODE -->
+    <button onclick="toggleDark()"
+        class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
+        🌙
+    </button>
+
+    <script>
+        function toggleDark() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme",
+                document.documentElement.classList.contains("dark") ? "dark" : "light"
+            );
+        }
+
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <div class="card p-10 w-[400px] text-center">
+
+        <h2 class="text-3xl font-bold mb-4">Secure Payment</h2>
+
+        <!-- EVENT NAME -->
+        <p class="text-lg mb-2">{{event_name}}</p>
+
+        <p class="text-sm text-gray-300 mb-4">
+            Complete your payment to confirm registration
+        </p>
+
+        <!-- QR -->
+        <div class="bg-white p-4 rounded-lg inline-block">
+            <img src="/{{qr_path}}" width="220">
+        </div>
+
+        <p class="mt-4 text-sm text-gray-300">Scan using any UPI app</p>
+
+        <!-- PRICE -->
+        <p class="mt-3 text-xl font-bold text-green-400">
+            ₹ {{price}}
+        </p>
+
+        <!-- UPI ID -->
+        <p class="mt-2 text-sm">
+            UPI ID: <span class="text-blue-400 font-semibold">7851894027@ybl</span>
+        </p>
+
+        <!-- BUTTON -->
+        <a href="/confirm_payment/{{event_id}}"
+            class="bg-green-500 w-full block mt-6 p-3 rounded-lg hover:bg-green-700 transition">
+            I Have Paid
+        </a>
+
+        <!-- BACK -->
+        <a href="/dashboard" class="block mt-3 text-sm text-gray-300 hover:underline">
+            Cancel & Go Back
+        </a>
+
+    </div>
+
+</body>
+
+</html>

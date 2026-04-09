@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <llink rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
+    <title>EventHub</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #000000, #1f1f1f);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+    </style>
+
+</head>
+
+<body class="text-white">
+
+    <!-- DARK MODE SCRIPT -->
+    <script>
+        function toggleDark() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme",
+                document.documentElement.classList.contains("dark") ? "dark" : "light"
+            );
+        }
+
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <!-- NAVBAR -->
+    <div class="flex justify-between items-center px-6 py-4">
+
+        <h1 class="text-xl font-bold">🎟 EventHub</h1>
+
+        <div class="flex items-center gap-3">
+
+            <a href="/login_page" class="bg-green-500 px-4 py-2 rounded hover:bg-green-700">
+                Login
+            </a>
+
+            <a href="/admin_login" class="bg-red-500 px-4 py-2 rounded hover:bg-red-700">
+                Admin
+            </a>
+
+            <button onclick="toggleDark()" class="bg-white text-black dark:bg-black dark:text-white px-2 py-1 rounded">
+                🌙
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- HERO -->
+    <div class="grid md:grid-cols-2 gap-10 px-6 sm:px-16 py-10 items-center">
+
+        <!-- LEFT -->
+        <div>
+
+            <h1 class="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
+                🚀 Smart Event <br>
+                <span class="text-blue-400">Registration System</span>
+            </h1>
+
+            <p class="text-gray-300 mb-6">
+                Signup with OTP, register for events, get QR tickets, track history and manage everything easily.
+            </p>
+
+            <ul class="text-gray-300 space-y-2">
+                <li>✔ Instant QR Ticket</li>
+                <li>✔ Secure UPI Payment</li>
+                <li>✔ Email Confirmation</li>
+                <li>✔ User Dashboard</li>
+            </ul>
+
+        </div>
+
+        <!-- RIGHT (CLEAN SIGNUP CARD) -->
+        <div class="glass p-8 max-w-md mx-auto w-full">
+
+            <h2 class="text-2xl mb-4 text-center font-semibold">
+                Create Account
+            </h2>
+
+            <p class="text-gray-300 text-center mb-6 text-sm">
+                Enter your email to receive OTP
+            </p>
+
+            <form action="/send_otp" method="POST">
+
+                <input class="w-full p-3 rounded-lg text-black mb-4" name="email" placeholder="Enter Email" required>
+
+                <button class="bg-blue-500 w-full p-3 rounded-lg hover:bg-blue-700 transition">
+                    Continue (Send OTP)
+                </button>
+
+            </form>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-3 my-6">
+                <hr class="flex-1 border-gray-500">
+                <span class="text-gray-400 text-sm">OR</span>
+                <hr class="flex-1 border-gray-500">
+            </div>
+
+            <!-- Secondary -->
+            <div class="flex flex-col gap-3">
+
+                <a href="/login_page"
+                    class="border border-green-500 text-green-400 p-3 rounded-lg text-center hover:bg-green-500 hover:text-white transition">
+                    Already have account? Login
+                </a>
+
+                <a href="/admin_login" class="text-center text-sm text-gray-400 hover:text-white">
+                    Admin Login →
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FEATURES -->
+    <div class="px-6 sm:px-16 py-10">
+
+        <h2 class="text-3xl text-center mb-10">✨ Features</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+
+            <div class="card p-6 text-center">
+                🎫<br><br>QR Tickets
+            </div>
+
+            <div class="card p-6 text-center">
+                💳<br><br>UPI Payment
+            </div>
+
+            <div class="card p-6 text-center">
+                📊<br><br>Dashboard
+            </div>
+
+            <div class="card p-6 text-center">
+                📜<br><br>History
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="px-6 sm:px-16 py-10 text-center">
+
+        <h2 class="text-3xl mb-8">⚡ How It Works</h2>
+
+        <div class="grid md:grid-cols-3 gap-6">
+
+            <div class="glass p-6">
+                1️⃣ Signup with OTP
+            </div>
+
+            <div class="glass p-6">
+                2️⃣ Register Event
+            </div>
+
+            <div class="glass p-6">
+                3️⃣ Get QR Ticket
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
