@@ -11,7 +11,8 @@ import qrcode
 import os
 import datetime
 from email.message import EmailMessage
-import os
+import psycopg2
+
 # from dotenv import load_dotenv
 # load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 EMAIL_USER = os.getenv("EMAIL_USER")
@@ -22,6 +23,11 @@ current_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
 
 UPLOAD_FOLDER="static/uploads"
 os.makedirs(UPLOAD_FOLDER,exist_ok=True)
+
+# --------DATABASE CONNECTION--------
+def get_db():
+    return psycopg2.connect(os.getenv("DATABASE_URL"))
+
 
 # send email function
 import requests
@@ -46,72 +52,6 @@ def send_email(to_email, subject, html_content):
 
     response = requests.post(url, json=data, headers=headers)
     print("EMAIL RESPONSE:", response.text)
-
-# ---------------- DATABASE ----------------
-
-def init_db():
-
-    conn = sqlite3.connect("otp.db")
-    cursor = conn.cursor()
-    # Users table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT,
-    otp TEXT,
-    time REAL,
-    name TEXT,
-    mobile TEXT,
-    password TEXT,
-    verified INTEGER,
-    image TEXT
-    )
-    """)
-    # Events registered by users
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS events(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_email TEXT,
-    event_name TEXT,
-    event_image TEXT,
-    qr_code TEXT,
-    unique_id TEXT
-    )
-    """)
-   
-    # Events by admin
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS event_list(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT,
-    description TEXT,
-    date TEXT,
-    image TEXT,
-    type TEXT,
-    price INTEGER,
-    contact_email TEXT
-    )
-    """)
-    
-    # User registrations
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS registrations(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    event_id INTEGER,
-    user_email TEXT,
-    name TEXT,
-    mobile TEXT,
-    age TEXT,
-    address TEXT,
-    payment_status TEXT,
-    created_at TEXT
-    )
-    """)
-
-    conn.commit()
-    conn.close()
-
-init_db()
 
 # ---------------- HOME ----------------
 
@@ -181,7 +121,7 @@ def add_event():
 
     cursor.execute("""
     INSERT INTO event_list(title,description,date,image,type,price,contact_email)
-    VALUES(?,?,?,?,?,?,?)
+    VALUES(%s,%s,%s,%s,%s,%s,%s)
     """,(title,description,date,path,type,price,contact_email))
     conn.commit()
     conn.close()
@@ -193,7 +133,7 @@ def add_event():
 @app.route("/view_registrations/<int:event_id>")
 def view_registrations(event_id):
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -206,7 +146,7 @@ def view_registrations(event_id):
            event_list.title
     FROM registrations
     JOIN event_list ON registrations.event_id = event_list.id
-    WHERE registrations.event_id=?
+    WHERE registrations.event_id=%s
     """, (event_id,))
 
     data = cursor.fetchall()
@@ -227,11 +167,11 @@ def submit_registration(event_id):
     email = session["user"]
     current_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     # get event type
-    cursor.execute("SELECT title,type FROM event_list WHERE id=?", (event_id,))
+    cursor.execute("SELECT title,type FROM event_list WHERE id=%s", (event_id,))
     event_data = cursor.fetchone()
 
     if not event_data:
@@ -243,7 +183,7 @@ def submit_registration(event_id):
     # insert registration
     cursor.execute("""
     INSERT INTO registrations(event_id,user_email,name,mobile,age,address,payment_status,created_at)
-    VALUES(?,?,?,?,?,?,?,?)
+    VALUES(%s,%s,%s,%s,%s,%s,%s,%s)
     """,(event_id,email,name,mobile,age,address,"pending",current_time))
 
     conn.commit()
@@ -267,13 +207,13 @@ def submit_registration(event_id):
         # save in events table
         cursor.execute("""
         INSERT INTO events(user_email,event_name,event_image,qr_code,unique_id)
-        VALUES(?,?,?,?,?)
+        VALUES(%s,%s,%s,%s,%s)
         """,(email,event_name,"",qr_path,unique_id))
 
         # mark as paid/done
         cursor.execute("""
         UPDATE registrations SET payment_status='done'
-        WHERE event_id=? AND user_email=?
+        WHERE event_id=%s AND user_email=%s
         """,(event_id,email))
 
         conn.commit()
@@ -337,10 +277,10 @@ def register_form(event_id):
     if "user" not in session:
         return redirect("/")
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM event_list WHERE id=?", (event_id,))
+    cursor.execute("SELECT * FROM event_list WHERE id=%s", (event_id,))
     event = cursor.fetchone()
 
     conn.close()
@@ -355,10 +295,10 @@ def register_form(event_id):
 @app.route("/payment/<int:event_id>")
 def payment(event_id):
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT title, price FROM event_list WHERE id=?", (event_id,))
+    cursor.execute("SELECT title, price FROM event_list WHERE id=%s", (event_id,))
     data = cursor.fetchone()
 
     if not data:
@@ -368,7 +308,7 @@ def payment(event_id):
     event_name, price = data
 
     # QR generate
-    upi_link = f"upi://pay?pa=7851894027@ybl&pn={event_name}&am={price}"
+    upi_link = f"upi://pay%spa=7851894027@ybl&pn={event_name}&am={price}"
 
     qr = qrcode.make(upi_link)
 
@@ -393,17 +333,17 @@ def confirm_payment(event_id):
 
     email = session["user"]
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     # mark payment done
     cursor.execute("""
     UPDATE registrations SET payment_status='done'
-    WHERE event_id=? AND user_email=?
+    WHERE event_id=%s AND user_email=%s
     """,(event_id,email))
 
     # get event name
-    cursor.execute("SELECT title FROM event_list WHERE id=?", (event_id,))
+    cursor.execute("SELECT title FROM event_list WHERE id=%s", (event_id,))
     event_name = cursor.fetchone()[0]
 
     import uuid
@@ -419,7 +359,7 @@ def confirm_payment(event_id):
     # save ticket
     cursor.execute("""
     INSERT INTO events(user_email,event_name,event_image,qr_code,unique_id)
-    VALUES(?,?,?,?,?)
+    VALUES(%s,%s,%s,%s,%s)
     """,(email,event_name,"",qr_path,unique_id))
 
     conn.commit()
@@ -428,9 +368,9 @@ def confirm_payment(event_id):
     # EMAIL
     try:
         # fetch user name to avoid undefined variable in email template
-        conn = sqlite3.connect("otp.db")
+        conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT name FROM users WHERE email=?", (email,))
+        cursor.execute("SELECT name FROM users WHERE email=%s", (email,))
         row = cursor.fetchone()
         conn.close()
         user_name = row[0] if row else email
@@ -484,7 +424,7 @@ def history():
 
     email = session["user"]
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -492,7 +432,7 @@ def history():
            registrations.payment_status, registrations.created_at
     FROM registrations
     JOIN event_list ON registrations.event_id = event_list.id
-    WHERE registrations.user_email=?
+    WHERE registrations.user_email=%s
     """,(email,))
 
     data = cursor.fetchall()
@@ -507,7 +447,7 @@ def delete(email):
     conn=sqlite3.connect("otp.db")
     cursor=conn.cursor()
 
-    cursor.execute("DELETE FROM users WHERE email=?",(email,))
+    cursor.execute("DELETE FROM users WHERE email=%s",(email,))
 
     conn.commit()
     conn.close()
@@ -518,20 +458,20 @@ def delete(email):
 @app.route("/delete_event/<int:id>")
 def delete_event(id):
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     # pehle event ka name lo
-    cursor.execute("SELECT title FROM event_list WHERE id=?", (id,))
+    cursor.execute("SELECT title FROM event_list WHERE id=%s", (id,))
     data = cursor.fetchone()
 
     if data:
         event_name = data[0]
 
         # sab tables se delete karo
-        cursor.execute("DELETE FROM registrations WHERE event_id=?", (id,))
-        cursor.execute("DELETE FROM events WHERE event_name=?", (event_name,))
-        cursor.execute("DELETE FROM event_list WHERE id=?", (id,))
+        cursor.execute("DELETE FROM registrations WHERE event_id=%s", (id,))
+        cursor.execute("DELETE FROM events WHERE event_name=%s", (event_name,))
+        cursor.execute("DELETE FROM event_list WHERE id=%s", (id,))
 
     conn.commit()
     conn.close()
@@ -581,12 +521,12 @@ def send_otp():
     response = requests.post(url, json=data, headers=headers)
     print("EMAIL RESPONSE:", response.text)
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
     INSERT INTO users(email,otp,time,verified)
-    VALUES(?,?,?,0)
+    VALUES(%s,%s,%s,0)
     """, (email, otp, otp_time))
 
     conn.commit()
@@ -607,7 +547,7 @@ def verify():
 
     cursor.execute("""
     SELECT otp,time FROM users
-    WHERE email=?
+    WHERE email=%s
     ORDER BY id DESC
     """,(email,))
 
@@ -668,8 +608,8 @@ def resend_otp():
 
     cursor.execute("""
     UPDATE users
-    SET otp=?,time=?
-    WHERE email=?
+    SET otp=%s,time=%s
+    WHERE email=%s
     """,(otp,otp_time,email))
 
     conn.commit()
@@ -692,8 +632,8 @@ def create_account():
 
     cursor.execute("""
     UPDATE users
-    SET name=?,mobile=?,password=?,verified=1
-    WHERE email=?
+    SET name=%s,mobile=%s,password=%s,verified=1
+    WHERE email=%s
     """,(name,mobile,password,email))
 
     conn.commit()
@@ -714,7 +654,7 @@ def login():
 
     cursor.execute("""
     SELECT name,password FROM users
-    WHERE email=? AND verified=1
+    WHERE email=%s AND verified=1
     ORDER BY id DESC
     """,(email,))
 
@@ -737,13 +677,13 @@ def dashboard():
     if "user" not in session:
         return redirect("/")
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM event_list")
     events = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM users WHERE email=?", (session["user"],))
+    cursor.execute("SELECT * FROM users WHERE email=%s", (session["user"],))
     user = cursor.fetchone()
 
     conn.close()
@@ -779,10 +719,10 @@ def register_event():
 
     cursor.execute("""
     INSERT INTO events(user_email,event_name,event_image,qr_code,unique_id)
-    VALUES(?,?,?,?,?)
+    VALUES(%s,%s,%s,%s,%s) RETURNING id
     """,(email,event,path,"temp",unique_id))
 
-    event_id=cursor.lastrowid
+    event_id = cursor.fetchone()[0]
 
     qr_data = request.host_url + "scan/" + unique_id
     qr=qrcode.make(qr_data)
@@ -791,7 +731,7 @@ def register_event():
     qr.save(qr_path)
 
     cursor.execute("""
-    UPDATE events SET qr_code=? WHERE id=?
+    UPDATE events SET qr_code=%s WHERE id=%s
     """,(qr_path,event_id))
 
     conn.commit()
@@ -842,7 +782,7 @@ def register_event():
 @app.route("/scan/<unique_id>")
 def scan(unique_id):
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -850,7 +790,7 @@ def scan(unique_id):
     FROM events e
     JOIN users u ON u.email = e.user_email
     LEFT JOIN registrations r ON r.user_email = u.email
-    WHERE e.unique_id=?
+    WHERE e.unique_id=%s
     """,(unique_id,))
 
     data = cursor.fetchone()
@@ -876,10 +816,10 @@ def scan(unique_id):
 @app.route("/profile")
 def profile():
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM users WHERE email=?", (session["user"],))
+    cursor.execute("SELECT * FROM users WHERE email=%s", (session["user"],))
     user = cursor.fetchone()
 
     conn.close()
@@ -895,12 +835,12 @@ def update_profile():
     name = request.form["name"]
     password = request.form["password"]
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
-    UPDATE users SET name=?, password=?
-    WHERE email=?
+    UPDATE users SET name=%s, password=%s
+    WHERE email=%s
     """, (name, password, session["user"]))
 
     conn.commit()
@@ -920,10 +860,10 @@ def upload_profile():
     path = "static/uploads/" + filename
     image.save(path)
 
-    conn = sqlite3.connect("otp.db")
+    conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("UPDATE users SET image=? WHERE email=?",
+    cursor.execute("UPDATE users SET image=%s WHERE email=%s",
                    (path, session["user"]))
 
     conn.commit()
