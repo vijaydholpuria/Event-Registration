@@ -256,7 +256,7 @@ def submit_registration(event_id):
         unique_id = "EVT" + uuid.uuid4().hex[:6].upper()
 
         # QR data (IMPORTANT)
-        qr_data = f"http://127.0.0.1:5000/scan/{unique_id}|{event_id}|{email}"
+        qr_data = request.host_url + "scan/" + unique_id
 
         qr = qrcode.make(qr_data)
 
@@ -409,7 +409,7 @@ def confirm_payment(event_id):
     import uuid
     unique_id = "EVT" + uuid.uuid4().hex[:6].upper()
 
-    qr_data = f"http://127.0.0.1:5000/scan/{unique_id}|{event_id}|{email}"
+    qr_data = request.host_url + "scan/" + unique_id
     qr = qrcode.make(qr_data)
 
     qr_path = UPLOAD_FOLDER + "/" + unique_id + ".png"
@@ -778,13 +778,13 @@ def register_event():
     cursor=conn.cursor()
 
     cursor.execute("""
-    INSERT INTO events(user_email,event_name,event_image,qr_code)
-    VALUES(?,?,?,?)
-    """,(email,event,path,"temp"))
+    INSERT INTO events(user_email,event_name,event_image,qr_code,unique_id)
+    VALUES(?,?,?,?,?)
+    """,(email,event,path,"temp",unique_id))
 
     event_id=cursor.lastrowid
 
-    qr_data="http://127.0.0.1:5000/scan/"+str(event_id)
+    qr_data = request.host_url + "scan/" + unique_id
     qr=qrcode.make(qr_data)
 
     qr_path=UPLOAD_FOLDER+"/event_"+str(event_id)+"_qr.png"
@@ -839,32 +839,37 @@ def register_event():
 
 # ---------------- QR SCAN ----------------
 
-@app.route("/scan/<path:data>")
-def scan(data):
+@app.route("/scan/<unique_id>")
+def scan(unique_id):
 
-    try:
-        unique_id, event_id, email = data.split("|")
+    conn = sqlite3.connect("otp.db")
+    cursor = conn.cursor()
 
-        conn = sqlite3.connect("otp.db")
-        cursor = conn.cursor()
+    cursor.execute("""
+    SELECT u.name,u.email,u.mobile,r.age,r.address,e.event_name
+    FROM events e
+    JOIN users u ON u.email = e.user_email
+    LEFT JOIN registrations r ON r.user_email = u.email
+    WHERE e.unique_id=?
+    """,(unique_id,))
 
-        cursor.execute("SELECT name,mobile FROM users WHERE email=?", (email,))
-        user = cursor.fetchone()
+    data = cursor.fetchone()
+    conn.close()
 
-        cursor.execute("SELECT title FROM event_list WHERE id=?", (event_id,))
-        event = cursor.fetchone()
+    if not data:
+        return "Invalid Ticket ❌"
 
-        conn.close()
+    name,email,mobile,age,address,event_name = data
 
-        return render_template("scan_result.html",
-            name=user[0],
-            email=email,
-            mobile=user[1],
-            event=event[0],
-            entry_id=unique_id)
-
-    except:
-        return "Invalid QR"
+    return render_template("scan_result.html",
+        name=name,
+        email=email,
+        mobile=mobile,
+        age=age,
+        address=address,
+        event_name=event_name,
+        ticket_id=unique_id
+    )
 
 # ---------------- PROFILE ----------------
 

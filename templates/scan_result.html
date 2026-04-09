@@ -2,52 +2,32 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
-
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
-
-    <title>Entry Verified</title>
-
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <button onclick="toggleDark()"
-        class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
+<body class="bg-gradient-to-br from-black to-gray-800 text-white flex items-center justify-center h-screen">
 
-        🌙
+    <div class="bg-white/10 backdrop-blur-lg p-8 rounded-2xl w-[350px] text-center shadow-lg">
 
-    </button>
+        <h2 class="text-2xl font-bold mb-4 text-green-400">🎟 Ticket Verified</h2>
 
-    <script>
-        function toggleDark() {
-            document.documentElement.classList.toggle("dark");
-            localStorage.setItem("theme",
-                document.documentElement.classList.contains("dark") ? "dark" : "light"
-            );
-        }
+        <p class="mb-2"><b>Event:</b> {{event_name}}</p>
+        <p class="mb-2"><b>Ticket ID:</b> {{ticket_id}}</p>
 
-        // load saved theme
-        if (localStorage.getItem("theme") === "dark") {
-            document.documentElement.classList.add("dark");
-        }
-    </script>
+        <hr class="my-4 border-white/20">
 
-    <h2>Entry Verified</h2>
+        <p><b>Name:</b> {{name}}</p>
+        <p><b>Email:</b> {{email}}</p>
+        <p><b>Mobile:</b> {{mobile}}</p>
+        <p><b>Age:</b> {{age}}</p>
+        <p><b>Address:</b> {{address}}</p>
 
-    <h3>ID : {{entry_id}}</h3>
+        <div class="mt-4 text-green-400 font-bold">
+            ✅ Entry Allowed
+        </div>
 
-    <img src="/{{image}}" width="200">
-
-    <p>Name : {{name}}</p>
-
-    <p>Email : {{email}}</p>
-
-    <p>Mobile : {{mobile}}</p>
+    </div>
 
 </body>
 
