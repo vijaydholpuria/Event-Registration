@@ -1,4 +1,6 @@
-﻿from flask import flash
+﻿from http import server
+
+from flask import flash
 from flask import Flask,render_template,request,session,redirect,url_for
 import random
 import smtplib
@@ -562,40 +564,53 @@ def logout():
 
 # ---------------- SEND OTP ----------------
 
-@app.route("/send_otp",methods=["POST"])
+@app.route("/send_otp", methods=["POST"])
 def send_otp():
 
-    email=request.form["email"]
+    email = request.form["email"]
 
-    otp=str(random.randint(100000,999999))
-    otp_time=time.time()
+    otp = str(random.randint(100000, 999999))
+    otp_time = time.time()
 
-    server=smtplib.SMTP("smtp-relay.brevo.com",587)
-    server.starttls()
-    server.login(EMAIL_USER, EMAIL_PASS)
+    import requests
 
-    message="Your OTP is "+otp
-    msg = EmailMessage()
-    msg["Subject"] = "OTP Verification"
-    msg["From"] = EMAIL_USER
-    msg["To"] = email
-    
-    msg.set_content(f"Your OTP is: {otp}")
-    
-    server.send_message(msg)
+    url = "https://api.brevo.com/v3/smtp/email"
 
-    conn=sqlite3.connect("otp.db")
-    cursor=conn.cursor()
+    headers = {
+        "accept": "application/json",
+        "api-key": os.getenv("BREVO_API_KEY"),
+        "content-type": "application/json"
+    }
+
+    data = {
+        "sender": {"email": os.getenv("EMAIL_USER")},
+        "to": [{"email": email}],
+        "subject": "OTP Verification",
+        "htmlContent": f"""
+        <div style="font-family: Arial; padding:20px;">
+            <h2 style="color:#2563eb;">OTP Verification</h2>
+            <p>Your OTP is:</p>
+            <h1 style="color:#16a34a;">{otp}</h1>
+            <p>This OTP is valid for limited time.</p>
+        </div>
+        """
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    print("EMAIL RESPONSE:", response.text)
+
+    conn = sqlite3.connect("otp.db")
+    cursor = conn.cursor()
 
     cursor.execute("""
     INSERT INTO users(email,otp,time,verified)
     VALUES(?,?,?,0)
-    """,(email,otp,otp_time))
+    """, (email, otp, otp_time))
 
     conn.commit()
     conn.close()
 
-    return render_template("verify.html",email=email)
+    return render_template("verify.html", email=email)
 
 # ---------------- VERIFY OTP ----------------
 
@@ -640,10 +655,29 @@ def resend_otp():
     otp=str(random.randint(100000,999999))
     otp_time=time.time()
 
-    server=smtplib.SMTP("smtp-relay.brevo.com",587)
-    server.starttls()
-    server.login(EMAIL_USER, EMAIL_PASS)
+    import requests
 
+    url = "https://api.brevo.com/v3/smtp/email"
+
+    headers = {
+        "accept": "application/json",
+        "api-key": os.getenv("BREVO_API_KEY"),
+        "content-type": "application/json"
+    }
+
+    data = {
+        "sender": {"email": os.getenv("EMAIL_USER")},
+        "to": [{"email": email}],
+        "subject": "OTP Verification",
+        "htmlContent": f"""
+        <div style="font-family: Arial; padding:20px;">
+            <h2 style="color:#2563eb;">OTP Verification</h2>
+            <p>Your OTP is:</p>
+            <h1 style="color:#16a34a;">{otp}</h1>
+            <p>This OTP is valid for limited time.</p>
+        </div>
+        """
+    }
     message="Your new OTP is "+otp
     server.sendmail(os.getenv("EMAIL_USER"), email, message)
 
