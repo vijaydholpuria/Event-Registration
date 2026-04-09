@@ -5,7 +5,6 @@ from flask import Flask,render_template,request,session,redirect,url_for
 import random
 import smtplib
 import time
-import sqlite3
 from lxml import html
 import qrcode
 import os
@@ -86,8 +85,7 @@ def admin():
 
     if "admin" not in session:
         return redirect("/admin_login")
-
-    conn=sqlite3.connect("otp.db")
+    conn=get_db()
     cursor=conn.cursor()
 
     cursor.execute("SELECT * FROM users")
@@ -115,8 +113,7 @@ def add_event():
 
     path="static/uploads/"+image.filename
     image.save(path)
-
-    conn=sqlite3.connect("otp.db")
+    conn=get_db()
     cursor=conn.cursor()
 
     cursor.execute("""
@@ -444,7 +441,7 @@ def history():
 @app.route("/delete/<email>")
 def delete(email):
 
-    conn=sqlite3.connect("otp.db")
+    conn=get_db()
     cursor=conn.cursor()
 
     cursor.execute("DELETE FROM users WHERE email=%s",(email,))
@@ -541,8 +538,7 @@ def verify():
 
     email=request.form["email"]
     otp=request.form["otp"]
-
-    conn=sqlite3.connect("otp.db")
+    conn=get_db()
     cursor=conn.cursor()
 
     cursor.execute("""
@@ -603,7 +599,7 @@ def resend_otp():
     message="Your new OTP is "+otp
     server.sendmail(os.getenv("EMAIL_USER"), email, message)
 
-    conn=sqlite3.connect("otp.db")
+    conn=get_db()
     cursor=conn.cursor()
 
     cursor.execute("""
@@ -627,7 +623,7 @@ def create_account():
     mobile=request.form["mobile"]
     password=request.form["password"]
 
-    conn=sqlite3.connect("otp.db")
+    conn=get_db()
     cursor=conn.cursor()
 
     cursor.execute("""
@@ -648,8 +644,7 @@ def login():
 
     email=request.form["email"]
     password=request.form["password"]
-
-    conn=sqlite3.connect("otp.db")
+    conn=get_db()
     cursor=conn.cursor()
 
     cursor.execute("""
@@ -714,7 +709,7 @@ def register_event():
     else:
         path=""
 
-    conn=sqlite3.connect("otp.db")
+    conn=get_db()
     cursor=conn.cursor()
 
     cursor.execute("""
