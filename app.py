@@ -1,4 +1,4 @@
-from flask import flash
+﻿from flask import flash
 from flask import Flask,render_template,request,session,redirect,url_for
 import random
 import smtplib
@@ -303,7 +303,7 @@ def submit_registration(event_id):
             print("SENDING EMAIL TO:", email)
 
             # SEND
-            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server = smtplib.SMTP("smtp-relay.brevo.com", 587)
             server.starttls()
             server.login(EMAIL_USER, EMAIL_PASS)
             server.send_message(msg)
@@ -478,7 +478,7 @@ def confirm_payment(event_id):
         print("SENDING EMAIL TO:", email)
         
         # SEND
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("smtp-relay.brevo.com", 587)
         server.starttls()
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
@@ -570,7 +570,7 @@ def send_otp():
     otp=str(random.randint(100000,999999))
     otp_time=time.time()
 
-    server=smtplib.SMTP("smtp.gmail.com",587)
+    server=smtplib.SMTP("smtp-relay.brevo.com",587)
     server.starttls()
     server.login(EMAIL_USER, EMAIL_PASS)
 
@@ -640,7 +640,7 @@ def resend_otp():
     otp=str(random.randint(100000,999999))
     otp_time=time.time()
 
-    server=smtplib.SMTP("smtp.gmail.com",587)
+    server=smtplib.SMTP("smtp-relay.brevo.com",587)
     server.starttls()
     server.login(EMAIL_USER, EMAIL_PASS)
 
@@ -790,7 +790,7 @@ def register_event():
         with open(qr_path,"rb") as f:
             msg.add_attachment(f.read(),maintype="image",subtype="png",filename="ticket.png")
 
-        server=smtplib.SMTP("smtp.gmail.com",587)
+        server=smtplib.SMTP("smtp-relay.brevo.com",587)
         server.starttls()
         server.login(EMAIL_USER, EMAIL_PASS)
 
@@ -915,7 +915,7 @@ def contact():
         {message}
         """)
 
-            server = smtplib.SMTP("smtp.gmail.com",587)
+            server = smtplib.SMTP("smtp-relay.brevo.com",587)
             server.starttls()
             server.login(EMAIL_USER, EMAIL_PASS)
 
