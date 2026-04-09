@@ -262,6 +262,7 @@ def submit_registration(event_id):
 
         qr_path = UPLOAD_FOLDER + "/" + unique_id + ".png"
         qr.save(qr_path)
+        qr_url = request.host_url + qr_path
 
         # save in events table
         cursor.execute("""
@@ -299,6 +300,7 @@ def submit_registration(event_id):
                     <hr style="margin:20px 0;">
             
                     <p>📌 Show your ticket at entry</p>
+                    <img src="{qr_url}" width="200" style="margin-top:10px; border-radius:10px;">
             
                     <p style="margin-top:20px; font-size:12px; color:#ccc;">
                         Thank you for using EventHub 🚀
@@ -412,6 +414,7 @@ def confirm_payment(event_id):
 
     qr_path = UPLOAD_FOLDER + "/" + unique_id + ".png"
     qr.save(qr_path)
+    qr_url = request.host_url + qr_path
 
     # save ticket
     cursor.execute("""
@@ -451,6 +454,7 @@ def confirm_payment(event_id):
                 <hr style="margin:20px 0;">
         
                 <p>📌 Show your ticket at entry</p>
+                <img src="{qr_url}" width="200" style="margin-top:10px; border-radius:10px;">
         
                 <p style="margin-top:20px; font-size:12px; color:#ccc;">
                     Thank you for using EventHub 🚀
