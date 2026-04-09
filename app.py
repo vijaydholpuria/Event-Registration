@@ -6,6 +6,7 @@ import random
 import smtplib
 import time
 import sqlite3
+from lxml import html
 import qrcode
 import os
 import datetime
@@ -21,6 +22,30 @@ current_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
 
 UPLOAD_FOLDER="static/uploads"
 os.makedirs(UPLOAD_FOLDER,exist_ok=True)
+
+# send email function
+import requests
+import os
+
+def send_email(to_email, subject, html_content):
+
+    url = "https://api.brevo.com/v3/smtp/email"
+
+    headers = {
+        "accept": "application/json",
+        "api-key": os.getenv("BREVO_API_KEY"),
+        "content-type": "application/json"
+    }
+
+    data = {
+        "sender": {"email": os.getenv("EMAIL_USER")},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "htmlContent": html_content
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    print("EMAIL RESPONSE:", response.text)
 
 # ---------------- DATABASE ----------------
 
@@ -255,13 +280,7 @@ def submit_registration(event_id):
 
         # -------- EMAIL --------
         try:
-            msg = EmailMessage()
-            msg["Subject"] = "🎟 Your Event Ticket"
-            msg["From"] = EMAIL_USER
-            msg["To"] = email
-    
-            # HTML DESIGN
-            html_content = f"""
+            html = f"""
             <html>
             <body style="font-family: Arial; background:#0f2027; padding:20px; color:white;">
             
@@ -279,7 +298,7 @@ def submit_registration(event_id):
             
                     <hr style="margin:20px 0;">
             
-                    <p>📌 Please show this attached QR code at entry</p>
+                    <p>📌 Show your ticket at entry</p>
             
                     <p style="margin-top:20px; font-size:12px; color:#ccc;">
                         Thank you for using EventHub 🚀
@@ -290,26 +309,9 @@ def submit_registration(event_id):
             </body>
             </html>
             """
-    
-            msg.add_alternative(html_content, subtype='html')
-
-            with open(qr_path, "rb") as f:
-                msg.add_attachment(
-                    f.read(),
-                    maintype='image',
-                    subtype='png',
-                    filename="ticket.png"
-                )
-                
-            print("EMAIL_USER:", EMAIL_USER)
-            print("SENDING EMAIL TO:", email)
-
-            # SEND
-            server = smtplib.SMTP("smtp-relay.brevo.com", 587)
-            server.starttls()
-            server.login(EMAIL_USER, EMAIL_PASS)
-            server.send_message(msg)
-            server.quit()
+            
+            send_email(email, "🎟 Your Event Ticket", html)
+            
 
             flash("Registration Successful 🎉")
             conn.close()
@@ -430,61 +432,37 @@ def confirm_payment(event_id):
         conn.close()
         user_name = row[0] if row else email
 
-        msg = EmailMessage()
-        msg["Subject"] = "🎟 Your Event Ticket"
-        msg["From"] = EMAIL_USER
-        msg["To"] = email
-
-        # HTML DESIGN
-        html_content = f"""
+        html = f"""
         <html>
         <body style="font-family: Arial; background:#0f2027; padding:20px; color:white;">
-
+        
             <div style="max-width:500px; margin:auto; background:#1e3c72; padding:20px; border-radius:15px; text-align:center;">
-
+        
                 <h2>🎉 Registration Successful</h2>
-
+        
                 <p style="font-size:16px;">Hello <b>{user_name}</b>,</p>
-
+        
                 <p>You have successfully registered for:</p>
-
+        
                 <h3 style="color:#4ade80;">{event_name}</h3>
-
+        
                 <p><b>Ticket ID:</b> {unique_id}</p>
-
+        
                 <hr style="margin:20px 0;">
-
-                <p>📌 Please show this attached QR code at entry</p>
-
+        
+                <p>📌 Show your ticket at entry</p>
+        
                 <p style="margin-top:20px; font-size:12px; color:#ccc;">
                     Thank you for using EventHub 🚀
                 </p>
-
+        
             </div>
-
+        
         </body>
         </html>
         """
-
-        msg.add_alternative(html_content, subtype='html')
-
-        with open(qr_path, "rb") as f:
-            msg.add_attachment(
-                f.read(),
-                maintype='image',
-                subtype='png',
-                filename="ticket.png"
-            )
-        print("EMAIL_USER:", EMAIL_USER)
-        print("EMAIL_PASS:", EMAIL_PASS)
-        print("SENDING EMAIL TO:", email)
         
-        # SEND
-        server = smtplib.SMTP("smtp-relay.brevo.com", 587)
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASS)
-        server.send_message(msg)
-        server.quit()
+        send_email(email, "🎟 Your Event Ticket", html)
 
     except Exception as e:
         print("SENDING EMAIL TO:", email)
@@ -782,6 +760,9 @@ def register_event():
     email=request.form["email"]
     event=request.form["event"]
     image=request.files.get("image")
+    user_name=request.form["user_name"]
+    unique_id=request.form["unique_id"]
+    event_name=request.form["event_name"]
 
     if image and image.filename!="":
         path=UPLOAD_FOLDER+"/"+image.filename
@@ -814,22 +795,37 @@ def register_event():
 
     try:
 
-        msg=EmailMessage()
-        msg["Subject"]="Event Ticket"
-        msg["From"]=EMAIL_USER
-        msg["To"]=email
-
-        msg.set_content("Your event registration successful. QR ticket attached.")
-
-        with open(qr_path,"rb") as f:
-            msg.add_attachment(f.read(),maintype="image",subtype="png",filename="ticket.png")
-
-        server=smtplib.SMTP("smtp-relay.brevo.com",587)
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASS)
-
-        server.send_message(msg)
-        server.quit()
+        html = f"""
+        <html>
+        <body style="font-family: Arial; background:#0f2027; padding:20px; color:white;">
+        
+            <div style="max-width:500px; margin:auto; background:#1e3c72; padding:20px; border-radius:15px; text-align:center;">
+        
+                <h2>🎉 Registration Successful</h2>
+        
+                <p style="font-size:16px;">Hello <b>{user_name}</b>,</p>
+        
+                <p>You have successfully registered for:</p>
+        
+                <h3 style="color:#4ade80;">{event_name}</h3>
+        
+                <p><b>Ticket ID:</b> {unique_id}</p>
+        
+                <hr style="margin:20px 0;">
+        
+                <p>📌 Show your ticket at entry</p>
+        
+                <p style="margin-top:20px; font-size:12px; color:#ccc;">
+                    Thank you for using EventHub 🚀
+                </p>
+        
+            </div>
+        
+        </body>
+        </html>
+        """
+        
+        send_email(email, "🎟 Your Event Ticket", html)
 
     except Exception as e:
         print("EMAIL ERROR:",e)
@@ -949,12 +945,7 @@ def contact():
         {message}
         """)
 
-            server = smtplib.SMTP("smtp-relay.brevo.com",587)
-            server.starttls()
-            server.login(EMAIL_USER, EMAIL_PASS)
-
-            server.send_message(msg)
-            server.quit()
+            send_email(EMAIL_USER, "New Contact Message", msg.get_content())
 
         except Exception as e:
             print("CONTACT ERROR:", e)
