@@ -10,41 +10,41 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <link rel="manifest" href="/static/site.webmanifest">
     <llink rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
-    <title>EventHub</title>
+        <title>EventHub</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
 
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
+        <script>
+            tailwind.config = { darkMode: 'class' }
+        </script>
 
-    <style>
-        body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-        }
+        <style>
+            body {
+                background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            }
 
-        .dark body {
-            background: linear-gradient(135deg, #000000, #1f1f1f);
-        }
+            .dark body {
+                background: linear-gradient(135deg, #000000, #1f1f1f);
+            }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-        }
+            .glass {
+                background: rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            }
 
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            transition: 0.3s;
-        }
+            .card {
+                background: rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(15px);
+                border-radius: 20px;
+                transition: 0.3s;
+            }
 
-        .card:hover {
-            transform: translateY(-8px);
-        }
-    </style>
+            .card:hover {
+                transform: translateY(-8px);
+            }
+        </style>
 
 </head>
 
@@ -206,6 +206,47 @@
         </div>
 
     </div>
+
+    <footer class="mt-16 text-white">
+
+        <div class="bg-black/40 backdrop-blur-md p-6 rounded-2xl max-w-6xl mx-auto">
+
+            <div class="grid md:grid-cols-3 gap-6 text-sm">
+
+                <!-- ABOUT -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">EventHub 🚀</h3>
+                    <p class="text-gray-300">
+                        A modern platform for seamless event registration, QR ticketing, and real-time management.
+                    </p>
+                </div>
+
+                <!-- LINKS -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Quick Links</h3>
+                    <ul class="space-y-1 text-gray-300">
+                        <li><a href="/about" class="hover:text-white">About</a></li>
+                    </ul>
+                </div>
+
+                <!-- CONTACT -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Contact</h3>
+                    <p class="text-gray-300">📧 vijay635037@gmail.com</p>
+                    <p class="text-gray-300 mt-1">📍 India</p>
+                </div>
+
+            </div>
+
+            <hr class="my-4 border-white/20">
+
+            <p class="text-center text-gray-400 text-sm">
+                © 2026 EventHub | Developed by Vijay Kumar dholpuria
+            </p>
+
+        </div>
+
+    </footer>
 
 </body>
 

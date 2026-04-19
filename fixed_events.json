@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "title": "Tech Fest 2026",
+        "description": "Biggest coding event",
+        "date": "2026-05-10",
+        "image": "static/uploads/tech.png",
+        "type": "free",
+        "price": 0
+    },
+    {
+        "id": 2,
+        "title": "Music Night",
+        "description": "Live concert",
+        "date": "2026-06-01",
+        "image": "static/uploads/music.png",
+        "type": "paid",
+        "price": 299
+    },
+    {
+        "id": 3,
+        "title": "Startup Meetup",
+        "description": "Meet founders and entrepreneurs.",
+        "date": "2026-05-20",
+        "image": "static/uploads/startup.png",
+        "type": "free",
+        "price": 0
+    },
+    {
+        "id": 4,
+        "title": "Hackathon 24hr",
+        "description": "Non-stop coding competition.",
+        "date": "2026-07-05",
+        "image": "static/uploads/hackathon.png",
+        "type": "paid",
+        "price": 199
+    },
+    {
+        "id": 5,
+        "title": "Gaming Tournament",
+        "description": "BGMI, Valorant and more.",
+        "date": "2026-06-15",
+        "image": "static/uploads/gaming.png",
+        "type": "paid",
+        "price": 149
+    }
+]

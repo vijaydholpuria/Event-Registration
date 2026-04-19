@@ -1,6 +1,6 @@
 ﻿from http import server
 
-from flask import flash
+from flask import flash, json
 from flask import Flask,render_template,request,session,redirect,url_for
 import random
 import smtplib
@@ -60,6 +60,10 @@ def send_email(to_email, subject, html_content):
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 @app.route("/login_page")
 def login_page():
@@ -667,29 +671,73 @@ def login():
 
     return "Invalid Email or Password"
 
-# ---------------- DASHBOARD ----------------
+def sync_fixed_events():
 
+    import json
+
+    with open("fixed_events.json") as f:
+        fixed_events = json.load(f)
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    for e in fixed_events:
+
+        cursor.execute("SELECT * FROM event_list WHERE title=%s", (e["title"],))
+        exists = cursor.fetchone()
+
+        if not exists:
+            cursor.execute("""
+            INSERT INTO event_list(title,description,date,image,type,price,contact_email)
+            VALUES(%s,%s,%s,%s,%s,%s,%s)
+            """,(
+                e["title"],
+                e["description"],
+                e["date"],
+                e["image"],
+                e["type"],
+                e["price"],
+                "vijay635037@gmail.com"
+            ))
+
+    conn.commit()
+    conn.close()
+# ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
 
     if "user" not in session:
         return redirect("/")
 
+    sync_fixed_events()
+
+    # LOAD FIXED EVENTS (SAFE)
+    fixed_events = []
+    if os.path.exists("fixed_events.json"):
+        with open("fixed_events.json") as f:
+            fixed_events = json.load(f)
+
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM event_list")
+    # LATEST EVENTS FIRST
+    cursor.execute("SELECT * FROM event_list ORDER BY id DESC")
     events = cursor.fetchall()
 
+    # USER DATA
     cursor.execute("SELECT * FROM users WHERE email=%s", (session["user"],))
     user = cursor.fetchone()
 
     conn.close()
 
+    # SAFE NAME
+    name = user[4] if user else "User"
+
     return render_template("dashboard.html",
-                           name=user[4],   # name
+                           name=name,
                            events=events,
-                           user=user)      
+                           user=user,
+                           fixed_events=fixed_events)
 
 # ---------------- REGISTER EVENT ----------------
 

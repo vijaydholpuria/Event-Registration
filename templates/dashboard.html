@@ -101,7 +101,7 @@
         <a href="/profile" class="bg-green-500 px-3 py-2 rounded text-center">👤 Profile</a>
         <a href="/history" class="bg-purple-500 px-3 py-2 rounded text-center">📜 History</a>
         <a href="/contact" class="bg-blue-500 px-3 py-2 rounded text-center">📞 Contact</a>
-        <a href="/about" class="bg-gray-500 px-3 py-2 rounded text-center">ℹ About</a>
+        <a href="/about" class="bg-gray-500 px-3 py-2 rounded text-center">About</a>
         <a href="/logout" class="bg-red-500 px-3 py-2 rounded text-center">🚪 Logout</a>
 
     </div>
@@ -128,7 +128,33 @@
 
     <!-- GRID -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <h2 class="text-2xl mb-4">⭐ Featured Events</h2>
 
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+
+            {% for e in fixed_events %}
+
+            <div class="card p-4">
+
+                <img src="/{{e.image}}" class="rounded-xl mb-4 h-40 w-full object-cover">
+
+                <h3 class="text-xl font-bold mb-2">{{e.title}}</h3>
+
+                <p class="text-sm text-gray-300 mb-2">{{e.description}}</p>
+
+                <p class="text-xs text-gray-400 mb-2">📅 {{e.date}}</p>
+
+                {% if e.type == "paid" %}
+                <p class="text-yellow-400 mb-2">₹{{e.price}}</p>
+                {% else %}
+                <p class="text-green-400 mb-2">Free</p>
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
         {% for e in events %}
 
         <div class="card p-4 w-full">
