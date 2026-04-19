@@ -16,6 +16,9 @@ import psycopg2
 # load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASS = os.getenv("EMAIL_PASS")
+ADMIN_USER = os.getenv("ADMIN_USER")
+ADMIN_PASS = os.getenv("ADMIN_PASS")
+
 app = Flask(__name__)
 app.secret_key="secret123"
 current_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
@@ -72,7 +75,7 @@ def admin_login():
         username=request.form["username"]
         password=request.form["password"]
 
-        if username=="admin" and password=="admin123":
+        if username == ADMIN_USER and password == ADMIN_PASS:
             session["admin"]=True
             return redirect("/admin")
 

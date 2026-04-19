@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - EventHub</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        }
+
+        .dark body {
+            background: #0a0a0a;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body class="text-white px-4 py-6 sm:p-10">
+
+    <!-- DARK MODE -->
+    <button onclick="toggleDark()"
+        class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
+        🌙
+    </button>
+
+    <script>
+        function toggleDark() {
+            document.documentElement.classList.toggle("dark");
+            localStorage.setItem("theme",
+                document.documentElement.classList.contains("dark") ? "dark" : "light"
+            );
+        }
+
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <!-- HEADER -->
+    <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-center">About EventHub 🚀</h1>
+
+    <!-- ABOUT PROJECT -->
+    <div class="card p-6 mb-8 max-w-4xl mx-auto">
+
+        <h2 class="text-2xl font-semibold mb-4">🎯 What is EventHub?</h2>
+
+        <p class="text-gray-300 leading-relaxed">
+            EventHub is a modern event registration and management platform designed to simplify how users discover,
+            register, and manage events. It provides a seamless experience for both users and administrators with
+            features like OTP-based authentication, QR-based ticketing, and real-time event tracking.
+        </p>
+
+        <h2 class="text-xl font-semibold mt-6 mb-2">⚙️ How it Works?</h2>
+
+        <ul class="list-disc ml-6 text-gray-300 space-y-1">
+            <li>User signs up using Email OTP verification</li>
+            <li>Browse available events (Free & Paid)</li>
+            <li>Register for events easily</li>
+            <li>Receive a unique QR ticket</li>
+            <li>Scan QR at entry for verification</li>
+        </ul>
+
+        <h2 class="text-xl font-semibold mt-6 mb-2">💡 Why EventHub?</h2>
+
+        <p class="text-gray-300">
+            It solves real-world problems like manual registrations, fake entries, and lack of tracking. With a clean UI
+            and secure backend, EventHub ensures a smooth and professional experience.
+        </p>
+
+    </div>
+
+    <!-- FEATURES -->
+    <div class="card p-6 mb-8 max-w-4xl mx-auto">
+
+        <h2 class="text-2xl font-semibold mb-4">✨ Key Features</h2>
+
+        <ul class="grid sm:grid-cols-2 gap-3 text-gray-300">
+            <li>🔐 OTP Authentication</li>
+            <li>🎟 QR Ticket System</li>
+            <li>💳 Payment Flow</li>
+            <li>📧 Email Notifications</li>
+            <li>📱 Mobile Friendly UI</li>
+            <li>🛠 Admin Dashboard</li>
+        </ul>
+
+    </div>
+
+    <!-- DEVELOPER CARD -->
+    <div class="card p-6 max-w-md mx-auto text-center">
+
+        <h2 class="text-xl font-semibold mb-4">👨‍💻 Developed By</h2>
+
+        <!-- IMAGE -->
+        <img src="/static/profile.jpeg" class="w-28 h-28 mx-auto rounded-full mb-4 object-cover border-2 border-white">
+
+        <h3 class="text-lg font-bold">Vijay Kumar Dholpuria</h3>
+
+        <p class="text-gray-400 text-sm mb-3">
+            Full Stack Developer (Python • Flask • Web)
+        </p>
+
+        <!-- CONTACT -->
+        <div class="text-sm space-y-2">
+
+            <p>📧 vijay635037@gmail.com</p>
+
+            <a href="https://www.linkedin.com/in/vijaykumardholpuria" target="_blank"
+                class="block bg-blue-500 rounded px-3 py-1 hover:bg-blue-700">
+                LinkedIn
+            </a>
+
+            <a href="https://github.com/vijaydholpuria" target="_blank" class="block bg-gray-700 rounded px-3 py-1 hover:bg-gray-900">
+                GitHub
+            </a>
+            <!-- /*prjects*/ -->
+             <a href="https://vijaydholpuria.github.io/vijay-portfolio/" target="_blank" class="block bg-green-500 rounded px-3 py-1 hover:bg-green-700">
+                Portfolio
+            </a>
+            <a href="https://resume-analyzer-pro-kvm3.onrender.com/index.html" target="_blank" class="block bg-purple-500 rounded px-3 py-1 hover:bg-purple-700">
+                Resume Analyzer
+            </a>
+            <a href="https://event-registration-giny.onrender.com/" target="_blank" class="block bg-yellow-500 rounded px-3 py-1 hover:bg-yellow-700">
+                Event Hub
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- BACK -->
+    <div class="text-center mt-8">
+        <a href="/dashboard" class="bg-green-500 px-6 py-2 rounded hover:bg-green-700">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</body>
+
+</html>
