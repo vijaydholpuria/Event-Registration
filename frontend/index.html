@@ -48,7 +48,7 @@
 
 </head>
 
-<body class="text-white">
+<body class="text-white" data-page="home">
 
     <!-- DARK MODE SCRIPT -->
     <script>
@@ -122,7 +122,7 @@
                 Enter your email to receive OTP
             </p>
 
-            <form action="/send_otp" method="POST">
+            <form id="sendOtpForm" action="#" method="POST">
 
                 <input class="w-full p-3 rounded-lg text-black mb-4" name="email" placeholder="Enter Email" required>
 
@@ -131,6 +131,7 @@
                 </button>
 
             </form>
+            <div data-message class="mt-3 text-center text-sm" role="status"></div>
 
             <!-- Divider -->
             <div class="flex items-center gap-3 my-6">
@@ -248,6 +249,8 @@
 
     </footer>
 
+<script src="/config.js"></script>
+<script defer src="/app.js"></script>
 </body>
 
 </html>

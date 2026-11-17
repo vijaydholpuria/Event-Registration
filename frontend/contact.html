@@ -33,7 +33,7 @@
 
         <h2 class="text-2xl mb-6 text-center">📩 Contact Admin</h2>
 
-        <form action="/contact" method="POST">
+        <form id="contactForm" action="#" method="POST">
 
             <input name="name" placeholder="Your Name" class="w-full p-3 mb-4 rounded text-black" required>
 
@@ -47,6 +47,7 @@
             </button>
 
         </form>
+        <div data-message class="mt-3 text-center text-sm" role="status"></div>
 
         <a href="/dashboard" class="block text-center mt-4 text-gray-300">
             ⬅ Back
@@ -54,6 +55,8 @@
 
     </div>
 
+<script src="/config.js"></script>
+<script defer src="/app.js"></script>
 </body>
 
 </html>

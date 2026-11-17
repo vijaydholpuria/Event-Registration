@@ -19,21 +19,21 @@
         }
 
         .card {
-            backdrop-filter: blur(15px);
             background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
     </style>
 
 </head>
 
-<body class="flex justify-center items-center h-screen text-white">
+<body class="text-white px-4 py-6 sm:p-10" data-page="registrations">
+
+    <!-- DARK MODE -->
     <button onclick="toggleDark()"
         class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
-
         🌙
-
     </button>
 
     <script>
@@ -44,39 +44,24 @@
             );
         }
 
-        // load saved theme
         if (localStorage.getItem("theme") === "dark") {
             document.documentElement.classList.add("dark");
         }
     </script>
 
-    <div class="card p-10 w-96">
+    <h1 class="text-2xl sm:text-3xl mb-6">👥 Registered Users</h1>
 
-        <h2 class="text-2xl font-bold mb-6 text-center">User Login</h2>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="bg-red-500 text-white p-3 rounded mb-4 text-center">
-            {{ messages[0] }}
-        </div>
-        {% endif %}
-        {% endwith %}
+    <!-- ✅ MOBILE + DESKTOP RESPONSIVE -->
+    <div id="registrationsList" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
 
-        <form action="/login" method="POST">
+    <br>
 
-            <input class="w-full p-3 rounded-lg text-black mb-4" name="email" placeholder="Email">
+    <a href="/admin" class="bg-blue-500 px-6 py-2 rounded hover:bg-blue-700">
+        ⬅ Back to Admin
+    </a>
 
-            <input type="password" class="w-full p-3 rounded-lg text-black mb-4" name="password" placeholder="Password">
-
-            <button class="bg-blue-500 w-full p-3 rounded-lg hover:bg-blue-700 transition">
-
-                Login
-
-            </button>
-
-        </form>
-
-    </div>
-
+<script src="/config.js"></script>
+<script defer src="/app.js"></script>
 </body>
 
 </html>

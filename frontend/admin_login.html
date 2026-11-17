@@ -35,7 +35,7 @@
 
 </head>
 
-<body class="flex justify-center items-center h-screen text-white">
+<body class="flex justify-center items-center h-screen text-white" data-page="admin-login">
     <button onclick="toggleDark()"
         class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
 
@@ -63,7 +63,7 @@
             Admin Login
         </h2>
 
-        <form method="POST">
+        <form id="adminLoginForm" method="POST" action="#">
 
             <input class="w-full p-3 rounded-lg text-black mb-4" name="username" placeholder="Admin Username">
 
@@ -76,6 +76,7 @@
             </button>
 
         </form>
+        <div data-message class="mt-3 text-center text-sm" role="status"></div>
 
         <br>
 
@@ -87,6 +88,8 @@
 
     </div>
 
+<script src="/config.js"></script>
+<script defer src="/app.js"></script>
 </body>
 
 </html>

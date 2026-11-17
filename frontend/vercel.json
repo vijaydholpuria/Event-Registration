@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/verify", "destination": "/verify.html" },
+    { "source": "/login_page", "destination": "/login.html" },
+    { "source": "/admin_login", "destination": "/admin_login.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/history", "destination": "/history.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/register_form/:eventId", "destination": "/register_form.html" },
+    { "source": "/payment/:eventId", "destination": "/payment.html" },
+    { "source": "/view_registrations/:eventId", "destination": "/registrations.html" },
+    { "source": "/scan/:ticketId", "destination": "/scan_result.html" }
+  ]
+}

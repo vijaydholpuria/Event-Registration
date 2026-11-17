@@ -56,7 +56,7 @@
 
 </head>
 
-<body class="text-white p-10">
+<body class="text-white p-10" data-page="admin">
     <button onclick="toggleDark()"
         class="fixed top-5 right-5 bg-white text-black dark:bg-black dark:text-white px-3 py-1 rounded shadow">
 
@@ -85,7 +85,7 @@
 
         <h2 class="text-xl mb-4">Create Event</h2>
 
-        <form action="/add_event" method="POST" enctype="multipart/form-data">
+        <form id="createEventForm" action="#" method="POST" enctype="multipart/form-data">
 
             <input class="w-full p-2 text-black mb-3 rounded" name="title" placeholder="Event Title">
 
@@ -110,6 +110,7 @@
             </button>
 
         </form>
+        <div data-message class="mt-3 text-center text-sm" role="status"></div>
 
     </div>
 
@@ -118,34 +119,16 @@
 
         <h2 class="text-xl mb-4">Manage Events</h2>
 
-        {% for e in events %}
-
-        <div class="bg-white/10 p-4 rounded mb-3">
-
-            <h3 class="text-lg font-bold">{{e[1]}}</h3>
-
-            <p>{{e[2]}}</p>
-
-            <p>Type: {{e[5]}} | ₹{{e[6]}}</p>
-
-            <div class="mt-3 flex gap-3">
-
-                <a href="/delete_event/{{e[0]}}" class="bg-red-500 px-3 py-1 rounded">Delete</a>
-
-                <a href="/view_registrations/{{e[0]}}" class="bg-blue-500 px-3 py-1 rounded">Users</a>
-
-            </div>
-
-        </div>
-
-        {% endfor %}
+        <div id="adminEvents"></div>
 
     </div>
 
-    <a href="/logout" class="bg-red-500 px-6 py-2 rounded hover:bg-red-700">
+    <a href="#" id="logoutLink" class="bg-red-500 px-6 py-2 rounded hover:bg-red-700">
         Logout
     </a>
 
+<script src="/config.js"></script>
+<script defer src="/app.js"></script>
 </body>
 
 </html>

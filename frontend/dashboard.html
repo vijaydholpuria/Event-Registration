@@ -41,21 +41,9 @@
     </style>
 </head>
 
-<body class="text-white px-4 py-6 sm:p-10">
+<body class="text-white px-4 py-6 sm:p-10" data-page="dashboard">
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div id="popup" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50">
-        {{ messages[0] }}
-    </div>
-
-    <script>
-        setTimeout(() => {
-            document.getElementById("popup").style.display = "none";
-        }, 3000);
-    </script>
-    {% endif %}
-    {% endwith %}
+    <div id="popup" data-message class="hidden fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50" role="status"></div>
 
     <!-- DARK MODE -->
     <script>
@@ -74,7 +62,7 @@
     <!-- NAVBAR -->
     <div class="flex justify-between items-center mb-6 relative">
 
-        <h1 class="text-xl font-bold">👋 Welcome {{name}}</h1>
+        <h1 class="text-xl font-bold">👋 Welcome <span id="userName"></span></h1>
 
         <div class="flex items-center gap-3">
 
@@ -86,7 +74,7 @@
             <!-- PROFILE CIRCLE (NEW) -->
             <div class="relative">
 
-                <img src="/{{user[8] if user and user[8] else 'static/default.png'}}" onclick="toggleMenu(event)"
+                <img id="profileImage" src="/static/default.png" onclick="toggleMenu(event)"
                     class="w-10 h-10 rounded-full border-2 border-white hover:scale-110 transition">
 
             </div>
@@ -102,7 +90,7 @@
         <a href="/history" class="bg-purple-500 px-3 py-2 rounded text-center">📜 History</a>
         <a href="/contact" class="bg-blue-500 px-3 py-2 rounded text-center">📞 Contact</a>
         <a href="/about" class="bg-gray-500 px-3 py-2 rounded text-center">About</a>
-        <a href="/logout" class="bg-red-500 px-3 py-2 rounded text-center">🚪 Logout</a>
+        <a href="#" id="logoutLink" class="bg-red-500 px-3 py-2 rounded text-center">🚪 Logout</a>
 
     </div>
 
@@ -127,50 +115,10 @@
     <h2 class="text-2xl mb-8 font-semibold">🚀 Available Events</h2>
 
     <!-- GRID -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {% for e in events %}
+    <div id="eventsList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
 
-        <div class="card p-4 w-full">
-
-            <img src="/{{e[4]}}" class="rounded-xl mb-4 h-40 w-full object-cover">
-
-            <h3 class="text-xl font-bold mb-2">{{e[1]}}</h3>
-
-            <p class="text-gray-300 text-sm mb-2">
-                {{e[2]}}
-            </p>
-
-            <p class="text-xs text-gray-400 mb-3">
-                📅 {{e[3]}}
-            </p>
-
-            {% if e[5] == "paid" %}
-            <p class="text-yellow-400 font-semibold mb-2">💰 ₹{{e[6]}}</p>
-            {% else %}
-            <p class="text-green-400 font-semibold mb-2">🆓 Free Event</p>
-            {% endif %}
-
-            <a href="/register_form/{{e[0]}}" class="block text-center mt-3 p-2 rounded-lg
-                {% if e[5]=='paid' %}
-                bg-yellow-500 hover:bg-yellow-700
-                {% else %}
-                bg-green-500 hover:bg-green-700
-                {% endif %}">
-
-                {% if e[5]=='paid' %}
-                Pay & Register
-                {% else %}
-                Register Now
-                {% endif %}
-
-            </a>
-
-        </div>
-
-        {% endfor %}
-
-    </div>
-
+<script src="/config.js"></script>
+<script defer src="/app.js"></script>
 </body>
 
 </html>

@@ -1,3 +1,24 @@
+
+# Environment variables and secrets
 .env
-otp.db
+.env.*
+!.env.example
+
+# Python
 __pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Local database
+otp.db
+
+# Vercel
+.vercel/
+frontend/.vercel/
+
+# Operating system
+.DS_Store
+Thumbs.db
+/backend/static/uploads/payment_qr.png
+/backend/static/uploads/vijay635037@gmail.com.png
