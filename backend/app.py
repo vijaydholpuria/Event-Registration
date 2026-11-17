@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASS = os.getenv("EMAIL_PASS")
 ADMIN_USER = os.getenv("ADMIN_USER")
-ADMIN_PASS = os.getenv("ADMIN_PASS") 
+ADMIN_PASS = os.getenv("ADMIN_PASS")
 UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", os.path.join(BASE_DIR, "static", "uploads"))
 MEDIA_SOURCE_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "").rstrip("/")
@@ -657,7 +657,7 @@ def add_event():
                     payload.get("date", ""),
                     image_path,
                     payload.get("type", ""),
-                    payload.get("price", ""),
+                    int(payload.get("price") or 0),
                     payload.get("contact_email", ""),
                 ),
             )
